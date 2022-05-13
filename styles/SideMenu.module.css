@@ -1,0 +1,12 @@
+.container_sidemu {
+  width: 100px;
+  height: 95%;
+  background-color: black;
+  position: absolute;
+  left: 5px;
+  border-radius: 15px;
+  display: flex;
+
+  flex-direction: column;
+  align-items: center;
+}

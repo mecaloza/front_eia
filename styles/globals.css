@@ -14,3 +14,9 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.icon_bar {
+  color: white;
+  font-size: 40px;
+  margin-top: 40px;
+}
