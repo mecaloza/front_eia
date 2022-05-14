@@ -3,14 +3,29 @@ import Image from "next/image";
 import styles from "../styles/SideMenu.module.css";
 
 import { BsPlusCircleFill, BsGraphUp } from "react-icons/bs";
-import { FaIndustry } from "react-icons/fa";
+import { FaIndustry, FaHome } from "react-icons/fa";
+import { useRouter } from "next/router";
 
 export default function SideMenu() {
+  const router = useRouter();
   return (
     <div className={styles.container_sidemu}>
-      <BsPlusCircleFill className="icon_bar"></BsPlusCircleFill>
-      <FaIndustry className="icon_bar"></FaIndustry>
-      <BsGraphUp className="icon_bar"></BsGraphUp>
+      <FaHome
+        className="icon_bar"
+        onClick={() => router.push({ pathname: "/" })}
+      ></FaHome>
+      <BsPlusCircleFill
+        className="icon_bar"
+        onClick={() => router.push({ pathname: "/createmachine" })}
+      ></BsPlusCircleFill>
+      <FaIndustry
+        className="icon_bar"
+        onClick={() => router.push({ pathname: "/createdevice" })}
+      ></FaIndustry>
+      <BsGraphUp
+        className="icon_bar"
+        onClick={() => router.push({ pathname: "/dashboard" })}
+      ></BsGraphUp>
     </div>
   );
 }

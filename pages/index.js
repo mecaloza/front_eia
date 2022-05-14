@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
@@ -5,6 +6,24 @@ import SideMenu from "../components/SideMenu";
 import Header from "../components/Header";
 
 export default function Home() {
+  const [list_machine, setlist_machine] = useState([]);
+  const get_machine = () => {
+    fetch("http://192.168.153.144:8000/api/create_machine/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((jsonresponse) => {
+        console.log(jsonresponse);
+        setlist_machine(jsonresponse["listado de maquinas"]);
+      });
+  };
+  useEffect(() => {
+    get_machine();
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -17,7 +36,11 @@ export default function Home() {
         <Header></Header>
         <SideMenu></SideMenu>
 
-        <div className={styles.title}>HOME</div>
+        <div className={styles.container_machine}>
+          {list_machine.map((item, index) => {
+            return <div key={"list" + String(index)}>{item.machine_name}</div>;
+          })}
+        </div>
       </main>
     </div>
   );
