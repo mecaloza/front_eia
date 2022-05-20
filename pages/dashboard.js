@@ -5,6 +5,7 @@ import styles from "../styles/Home.module.css";
 import SideMenu from "../components/SideMenu";
 import Header from "../components/Header";
 import Graph from "../components/Graph";
+import RTGraph from "../components/RTGraph";
 import { GiElectric } from "react-icons/gi";
 
 var mqtt = require("mqtt");
@@ -15,9 +16,13 @@ var options = {
   username: "smart",
   password: "FzSjl27L9Ac9VVlk",
 };
+var cont = 0;
 export default function Dashboard({ data }) {
   const [current_val, setcurrent] = useState("");
   const [voltage_val, setvoltage_val] = useState("");
+
+  // Real time graph
+  const [current_graph, setcurrent_graph] = useState([{ id: 0, value: 0 }]);
 
   let currentref = useRef("");
   currentref.current = current_val;
@@ -28,17 +33,27 @@ export default function Dashboard({ data }) {
 
     client.on("message", function (topic, message) {
       note = message.toString();
-      console.log("nota", topic);
 
       if (topic === "Termofijadora01/fase3/corriente") {
+        console.log("corriente", note);
+        cont = cont + 1;
+        setcurrent_graph((current_graph) => [
+          ...current_graph,
+          { id: cont, value: note },
+        ]);
+
         setcurrent(note);
       } else if (topic === "Termofijadora01/fase3/voltaje") {
         setvoltage_val(note);
+        console.log("voltaje", note);
       }
       if (currentref.current === "") {
         client.end();
       }
     });
+  }, []);
+  useEffect(() => {
+    console.log("arra");
   }, []);
   return (
     <div className={styles.container}>
@@ -53,6 +68,8 @@ export default function Dashboard({ data }) {
         <SideMenu></SideMenu>
 
         <Graph data={data["list_1"]} data_1={data["list_2"]}></Graph>
+        <RTGraph data={current_graph}></RTGraph>
+
         <div className={styles.container_widgets}>
           <div className={styles.widget}>
             <div className={styles.title_widget}>Corriente</div>
