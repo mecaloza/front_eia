@@ -17,15 +17,24 @@ var options = {
 };
 export default function Dashboard({ data }) {
   const [current_val, setcurrent] = useState("");
+  const [voltage_val, setvoltage_val] = useState("");
+
   let currentref = useRef("");
   currentref.current = current_val;
   useEffect(() => {
     var client = mqtt.connect("mqtt://smart.cloud.shiftr.io", options);
-    client.subscribe("Termofijadora01/fase3/corriente");
+    client.subscribe("Termofijadora01/fase3/#");
     var note;
+
     client.on("message", function (topic, message) {
       note = message.toString();
-      setcurrent(note);
+      console.log("nota", topic);
+
+      if (topic === "Termofijadora01/fase3/corriente") {
+        setcurrent(note);
+      } else if (topic === "Termofijadora01/fase3/voltaje") {
+        setvoltage_val(note);
+      }
       if (currentref.current === "") {
         client.end();
       }
@@ -43,7 +52,7 @@ export default function Dashboard({ data }) {
         <Header></Header>
         <SideMenu></SideMenu>
 
-        <Graph data={data["listado de puntos"]}></Graph>
+        <Graph data={data["list_1"]} data_1={data["list_2"]}></Graph>
         <div className={styles.container_widgets}>
           <div className={styles.widget}>
             <div className={styles.title_widget}>Corriente</div>
@@ -55,7 +64,16 @@ export default function Dashboard({ data }) {
               <div className={styles.title_widget}>{current_val}</div>
             </div>
           </div>
-          <div className={styles.widget}></div>
+          <div className={styles.widget}>
+            <div className={styles.title_widget}>Voltaje</div>
+            <div className={styles.row_widget}>
+              <GiElectric
+                className="icon_bar"
+                style={{ fontSize: "100px" }}
+              ></GiElectric>
+              <div className={styles.title_widget}>{voltage_val}</div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -64,7 +82,7 @@ export default function Dashboard({ data }) {
 
 export const getServerSideProps = async () => {
   const apiResponse = await fetch(
-    "http://192.168.153.144:8000/api/get_dots/1/"
+    "http://192.168.122.144:8000/api/get_dots/1/"
   );
   const data = await apiResponse.json();
 

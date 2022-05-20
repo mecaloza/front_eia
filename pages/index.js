@@ -5,24 +5,28 @@ import styles from "../styles/Home.module.css";
 import SideMenu from "../components/SideMenu";
 import Header from "../components/Header";
 
-export default function Home({ list_machine }) {
-  // const [list_machine, setlist_machine] = useState([]);
-  // const get_machine = () => {
-  //   fetch("http://192.168.153.144:8000/api/create_machine/", {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((jsonresponse) => {
-  //       console.log(jsonresponse);
-  //       setlist_machine(jsonresponse["listado de maquinas"]);
-  //     });
-  // };
-  // useEffect(() => {
-  //   get_machine();
-  // }, []);
+export default function Home({ list_machine_1 }) {
+  const [list_machine, setlist_machine] = useState([]);
+  const get_machine = () => {
+    fetch("http://192.168.122.144:8000/api/create_machine/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => {
+      if (response.status === 200) {
+        return response.json().then((json_response) => {
+          setlist_machine(json_response["listado de maquinas"]);
+          return false;
+        });
+      } else {
+        alert("fallo");
+      }
+    });
+  };
+  useEffect(() => {
+    get_machine();
+  }, []);
 
   return (
     <>
@@ -36,7 +40,7 @@ export default function Home({ list_machine }) {
         <SideMenu> </SideMenu>
 
         <div className={styles.container_machine}>
-          {list_machine["listado de maquinas"].map((item, index) => {
+          {list_machine.map((item, index) => {
             return (
               <>
                 <div
@@ -56,7 +60,7 @@ export default function Home({ list_machine }) {
 
 export const getServerSideProps = async () => {
   const apiResponse = await fetch(
-    "http://192.168.153.144:8000/api/create_machine/"
+    "http://192.168.122.144:8000/api/create_machine/"
   );
   const list_machine = await apiResponse.json();
 
