@@ -17,7 +17,7 @@ var options = {
   password: "FzSjl27L9Ac9VVlk",
 };
 var cont = 0;
-export default function Dashboard({ data }) {
+export default function Dashboard({ data_send }) {
   const [current_val, setcurrent] = useState("");
   const [voltage_val, setvoltage_val] = useState("");
 
@@ -27,6 +27,7 @@ export default function Dashboard({ data }) {
   let currentref = useRef("");
   currentref.current = current_val;
   useEffect(() => {
+    console.log("data", data_send);
     var client = mqtt.connect("mqtt://smart.cloud.shiftr.io", options);
     client.subscribe("Termofijadora01/fase3/#");
     var note;
@@ -67,7 +68,8 @@ export default function Dashboard({ data }) {
         <Header></Header>
         <SideMenu></SideMenu>
 
-        <Graph data={data["list_1"]} data_1={data["list_2"]}></Graph>
+        <Graph data={data_send?.list_1} data_1={data_send?.list_2}></Graph>
+
         <RTGraph data={current_graph}></RTGraph>
 
         <div className={styles.container_widgets}>
@@ -98,10 +100,12 @@ export default function Dashboard({ data }) {
 }
 
 export const getServerSideProps = async () => {
-  const apiResponse = await fetch(
-    "http://192.168.122.144:8000/api/get_dots/1/"
-  );
+  const apiResponse = await fetch("http://127.0.0.1:8000/get_dots/1/");
+
   const data = await apiResponse.json();
 
-  return { props: { data } };
+  const data_send = data.data;
+  console.log(data_send);
+
+  return { props: { data_send } };
 };
