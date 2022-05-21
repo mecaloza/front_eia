@@ -100,7 +100,7 @@ export default function Dashboard({ data_send }) {
 }
 
 export const getServerSideProps = async () => {
-  const apiResponse = await fetch("http://127.0.0.1:8000/get_dots/1/");
+  const apiResponse = await fetch("https://kyxyx7.deta.dev/get_dots/1/");
 
   const data = await apiResponse.json();
 
